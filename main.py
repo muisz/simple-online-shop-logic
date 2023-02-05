@@ -60,6 +60,7 @@ def main():
     book.showItemInfo()
 
     customer.wallet.showWalletInfo()
+    customer.wallet.showWalletHistory()
 
 if __name__ == '__main__':
     main()

@@ -16,13 +16,30 @@ class Address:
         print('City\t\t: ', self.city)
         print('Post code\t: ', self.postCode)
 
+class WalletHistory:
+    amount: float
+    balance: float
+    transactionName: str
+    # next: WalletHistory
+
+    def __init__(self, transactionName: str, amount: float, balance: float):
+        self.transactionName = transactionName
+        self.amount = amount
+        self.balance = balance
+        self.next = None
+    
+    def setNext(self, nextHistory):
+        self.next = nextHistory
+
 class Wallet:
     balance: float
     pin: str
+    history: WalletHistory
 
     def __init__(self, pin):
         self.balance = 0
         self.pin = pin
+        self.history = WalletHistory('Inital', 0, 0)
     
     def checkPinNumber(self):
         pinNumber = input('Enter pin number: ')
@@ -37,14 +54,35 @@ class Wallet:
     def isValidPinNumber(self, pinToCheck: str):
         return pinToCheck == self.pin
     
+    def recordHistory(self, transactionName: str, amount: float, balance: float, currentHistory: WalletHistory):
+        if currentHistory.next is None:
+            history = WalletHistory(transactionName, amount, balance)
+            currentHistory.setNext(history)
+        else:
+            self.recordHistory(transactionName, amount, balance, currentHistory.next)
+    
+    def showHistory(self, history: WalletHistory):
+        print('=====================')
+        print('Transaction Name\t: ', history.transactionName)
+        print('amount\t\t\t: ', history.amount)
+        print('balance\t\t\t: ', history.balance)
+        print('=====================')
+        if history.next is not None:
+            self.showHistory(history.next)
+    
+    def showWalletHistory(self):
+        self.showHistory(self.history)
+    
     def topup(self, amount: float):
         self.checkPinNumber()
         self.balance += amount
+        self.recordHistory('topup', amount, self.balance, self.history)
     
     def paid(self, amount: float):
         self.checkPinNumber()
         self.checkAmount(amount)
         self.balance -= amount
+        self.recordHistory('paid', amount, self.balance, self.history)
     
     def showWalletInfo(self):
         print('========================')
