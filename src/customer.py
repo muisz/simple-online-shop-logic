@@ -30,6 +30,9 @@ class WalletHistory:
     
     def setNext(self, nextHistory):
         self.next = nextHistory
+    
+    def hasNext(self):
+        return self.next is not None
 
 class Wallet:
     balance: float
@@ -55,7 +58,7 @@ class Wallet:
         return pinToCheck == self.pin
     
     def recordHistory(self, transactionName: str, amount: float, balance: float, currentHistory: WalletHistory):
-        if currentHistory.next is None:
+        if not currentHistory.hasNext():
             history = WalletHistory(transactionName, amount, balance)
             currentHistory.setNext(history)
         else:
@@ -67,7 +70,7 @@ class Wallet:
         print('amount\t\t\t: ', history.amount)
         print('balance\t\t\t: ', history.balance)
         print('=====================')
-        if history.next is not None:
+        if history.hasNext():
             self.showHistory(history.next)
     
     def showWalletHistory(self):
